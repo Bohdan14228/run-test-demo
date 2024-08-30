@@ -1,12 +1,10 @@
 from selenium import webdriver
-from selenium.webdriver.common.by import By
 import pytest
 
 
 @pytest.fixture()
 def browser():
     chrome_browser = webdriver.Chrome()
-    у = 0
     return chrome_browser
 
 
