@@ -12,6 +12,7 @@ on: # запускать тест в ситуации
         options:
           - first_test
           - second_test
+          - all_test
 
 jobs: # наши джобы, можем прописывать тесты по отдельности
   test:
@@ -37,4 +38,6 @@ jobs: # наши джобы, можем прописывать тесты по �
         if: "github.event.deployment_target == 'second_test'"
         run: pytest tests/test_button.py::test_button_exist_2
 
+      - name: all_test
+        run: pytest
 
