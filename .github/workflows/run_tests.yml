@@ -38,12 +38,44 @@ jobs: # наши джобы, можем прописывать тесты по �
 
       - name: first_test
         if: "github.event.deployment_target == 'first_test'"
-        run: pytest tests/test_button.py::test_button_exist
+        run: pytest tests/test_button.py::test_button_exist --alluredir=allere-results
 
       - name: second_test
         if: "github.event.deployment_target == 'second_test'"
-        run: pytest tests/test_button.py::test_button_exist_2
+        run: pytest tests/test_button.py::test_button_exist_2 --alluredir=allere-results
 
       - name: all_test
         run: pytest
+
+      - name: Story allure results
+        uses: actions/upload-artifacts@v3  # upload-artifacts@v3 гитхабовский экшион который сохраняет артифакты чтобы они были доступны для разных контейнеров
+        with: 
+          name: allure-results
+          path:
+            allure-results
+          retention-days: 1  # говорим что этот артифакт может жить день, потом он удалится
+            
+
+        
+  generate-report:
+    runs-on: ubuntu-latest
+    needs: test # говорим чтобы эта джоба запускалась после выболения джобы test так как джобы без указания запускаются одновременно
+    name: generate report
+    steps:
+      # для генерации allure отчетов нужна джава
+      - uses: actions/setup-java@v3
+        with: 
+          distribution: 'microsoft'
+          java-version: '17'
+      - run: sudo wget https://github.com/allure-framework/allure2/releases/download/2.23.1/allure-2.23.1.tgz && sudo tar -zxvf allure-2.23.1.tgz -C /opt/ && sudo ln -s /opt/allure-2.23.1/bin/allure /usr/bin/allure
+      - name: Download all workflow run artifacts
+        uses: actions/download-artifact@v3
+      - run: allure generate -c allure-results -o _site  # -c говорим в какой папке результаты чтобы их запустить  
+      - name: Store generated report
+        uses: actions/upload-artifact@v3
+        with:
+          name: _site
+          path:
+            _site
+          retention-days: 1
 
