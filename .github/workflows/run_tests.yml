@@ -68,7 +68,7 @@ jobs: # наши джобы, можем прописывать тесты по �
           distribution: 'microsoft'
           java-version: '17'
       - run: sudo wget https://github.com/allure-framework/allure2/releases/download/2.23.1/allure-2.23.1.tgz && sudo tar -zxvf allure-2.23.1.tgz -C /opt/ && sudo ln -s /opt/allure-2.23.1/bin/allure /usr/bin/allure
-      - name: Download all workflow run artifacts
+      - name: Download all workflow run artifacts  # степ гитхаба который позволяет скачать все артифакты которые раньше были сгенерированы 
         uses: actions/download-artifact@v3
       - run: allure generate -c allure-results -o _site  # -c говорим в какой папке результаты чтобы их запустить  
       - name: Store generated report
@@ -78,4 +78,17 @@ jobs: # наши джобы, можем прописывать тесты по �
           path:
             _site
           retention-days: 1
+          
+  publish-report:
+    runs-on: ubuntu-latest
+    needs: generate-report
+    name: Report publication
+    steps:
+      - name: Download all workflow run artifacts
+        uses: actions/download-artifact@v3
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v2
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1.2.9
 
