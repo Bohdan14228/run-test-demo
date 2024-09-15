@@ -38,16 +38,13 @@ jobs: # наши джобы, можем прописывать тесты по �
 
       - name: first_test
         if: "github.event.deployment_target == 'first_test'"
-        run: pytest tests/test_button.py::test_button_exist --alluredir=allere-results
+        run: pytest tests/test_button.py::test_button_exist --alluredir=allure-results
 
       - name: second_test
         if: "github.event.deployment_target == 'second_test'"
-        run: pytest tests/test_button.py::test_button_exist_2 --alluredir=allere-results
+        run: pytest tests/test_button.py::test_button_exist_2 --alluredir=allure-results
 
-      - name: all_test
-        run: pytest
-
-      - name: Story allure results
+      - name: Store allure results
         uses: actions/upload-artifacts@v3  # upload-artifacts@v3 гитхабовский экшион который сохраняет артифакты чтобы они были доступны для разных контейнеров
         with: 
           name: allure-results
